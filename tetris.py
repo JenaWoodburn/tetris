@@ -1,4 +1,5 @@
 import turtle
+import time
 
 # Create game window
 wn = turtle.Screen()
@@ -6,6 +7,8 @@ wn.title("TETRIS")
 wn.bgcolor(0.4,0.4,0.4) #mid-grey
 wn.setup(width=600, height=800)
 wn.tracer(0)
+
+delay = 0.05
 
 #define class Shape
 class Shape():
@@ -124,3 +127,5 @@ while True:
         shape = Shape()
         
     draw_grid(pen, grid)
+
+    time.sleep(delay)
