@@ -14,6 +14,30 @@ class Shape():
         self.y = 0
         self.colour = 4
 
+    # move shape left
+    def move_left(self, grid):
+        #check shape isn't already on left edge
+        if self.x > 0:
+            #check cell to the left is empty
+            if grid[self.y][self.x-1] == 0:
+                #clear shape's current cell
+                grid[self.y][self.x] = 0
+                #clear shape's current cell
+                #move left by 1
+                self.x -= 1
+
+    # move shape right
+    def move_right(self, grid):
+        #check shape isnt' already on right edge
+        if self.x < (len(grid[0]) - 1):
+            # check cell to the right is empty
+            if grid[self.y][self.x+1] == 0:
+                #clear shape's current cell
+                grid[self.y][self.x] = 0
+                #move right by 1
+                self.x += 1
+
+
 # Define grid to display shapes on
 grid = [
     [0,0,0,0,0,0,0,0,0,0,0,0],
@@ -74,6 +98,11 @@ grid[shape.y][shape.x] = shape.colour
 
 #draw the grid
 draw_grid(pen, grid)
+
+# left and right movement
+wn.listen()
+wn.onkeypress(lambda: shape.move_left(grid), "a")
+wn.onkeypress(lambda: shape.move_right(grid), "d")
 
 #keep shapes falling until they are stopped, create new shapes
 while True:
