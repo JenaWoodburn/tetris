@@ -66,8 +66,11 @@ grid = [
     [0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0]
+    [3,0,2,6,0,1,0,1,4,5,6,4]
 ]
+
+len_x = len(grid[0])
+len_y = len(grid)
 
 #pen settings, defines grid cells' size
 pen = turtle.Turtle()
@@ -119,12 +122,28 @@ while True:
     elif grid[shape.y + 1][shape.x] == 0:
         #if so, clear existing shape position
         grid[shape.y][shape.x] = 0
-        #update shape's coords (y+=1) 
+        #update shape's coords (y+1) 
         shape.y += 1
         #fill it in
         grid[shape.y][shape.x] = shape.colour
     else:
         shape = Shape()
+
+    #check if bottom row is full
+    y = len_y-1
+    is_full = True
+    #if any cell contains 0, row is not full, break
+    for x in range (0, len_x):
+        if grid[y][x] == 0:
+            is_full = False
+            break
+    # if row is full
+    if is_full:
+        # for each row above it
+        for y in range(y-1, -1, -1):
+            # copy each cell in that row into the row below
+            for x in range(0,len_x):
+                grid[y+1][x] = grid[y][x]
         
     draw_grid(pen, grid)
 
