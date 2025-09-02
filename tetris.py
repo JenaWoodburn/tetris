@@ -65,7 +65,7 @@ grid = [
     [0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0],
+    [1,1,1,1,1,1,1,1,1,1,1,0],
     [3,0,2,6,0,1,0,1,4,5,6,4]
 ]
 
@@ -98,6 +98,25 @@ def draw_grid(pen: turtle.Turtle, grid: list[list[int]]):
             pen.goto(screen_x,screen_y)
             pen.stamp()
 
+def check_grid(grid):
+    #check if bottom row is full
+    y = 23
+    while y > 0:
+        is_full = True
+        #if any cell contains 0, row is not full, break
+        for x in range (0, 12):
+            if grid[y][x] == 0:
+                is_full = False
+                y -= 1
+                break
+        # if row is full
+        if is_full:
+            # for each row above it
+            for copy_y in range(y, 0, -1):
+                # copy each cell in that row into the row below
+                for copy_x in range(0, 12):
+                    grid[copy_y][copy_x] = grid[copy_y-1][copy_x]
+
 #create initial shape
 shape = Shape()
 grid[shape.y][shape.x] = shape.colour
@@ -118,6 +137,7 @@ while True:
     #if shape has reached the bottom row it stays there, create new shape
     if shape.y == 23:
         shape = Shape()
+        check_grid(grid)
     #check if cell below shape is empty
     elif grid[shape.y + 1][shape.x] == 0:
         #if so, clear existing shape position
@@ -128,22 +148,7 @@ while True:
         grid[shape.y][shape.x] = shape.colour
     else:
         shape = Shape()
-
-    #check if bottom row is full
-    y = len_y-1
-    is_full = True
-    #if any cell contains 0, row is not full, break
-    for x in range (0, len_x):
-        if grid[y][x] == 0:
-            is_full = False
-            break
-    # if row is full
-    if is_full:
-        # for each row above it
-        for y in range(y-1, -1, -1):
-            # copy each cell in that row into the row below
-            for x in range(0,len_x):
-                grid[y+1][x] = grid[y][x]
+        check_grid(grid)
         
     draw_grid(pen, grid)
 
