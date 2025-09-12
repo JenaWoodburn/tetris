@@ -1,5 +1,6 @@
 import turtle
 import time
+import random
 
 # Create game window
 wn = turtle.Screen()
@@ -15,7 +16,11 @@ class Shape():
     def __init__(self):
         self.x = 5
         self.y = 0
-        self.colour = 4
+        self.colour = random.randint(1,6)
+
+        #large square shape
+        self.shape = [ [1,1], 
+                      [1,1] ]
 
     # move shape left
     def move_left(self, grid):
@@ -32,7 +37,7 @@ class Shape():
     # move shape right
     def move_right(self, grid):
         #check shape isnt' already on right edge
-        if self.x < (len(grid[0]) - 1):
+        if self.x < (len_x - 1):
             # check cell to the right is empty
             if grid[self.y][self.x+1] == 0:
                 #clear shape's current cell
@@ -99,7 +104,8 @@ def draw_grid(pen: turtle.Turtle, grid: list[list[int]]):
             pen.stamp()
 
 def check_grid(grid):
-    #check if bottom row is full
+    #check if any row is full
+    #start at bottom and work up as rows above full rows need to be copied downwards
     y = 23
     while y > 0:
         is_full = True
@@ -129,7 +135,7 @@ wn.listen()
 wn.onkeypress(lambda: shape.move_left(grid), "a")
 wn.onkeypress(lambda: shape.move_right(grid), "d")
 
-#keep shapes falling until they are stopped, create new shapes
+#draw shape; keep shape falling until is stopped; create new shape
 while True:
     wn.update()
 
@@ -153,3 +159,5 @@ while True:
     draw_grid(pen, grid)
 
     time.sleep(delay)
+
+    
