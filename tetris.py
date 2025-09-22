@@ -16,11 +16,28 @@ class Shape():
     def __init__(self):
         self.x = 5
         self.y = 0
-        self.colour = random.randint(1,6)
+        self.colour = random.randint(1,7)
 
         #large square shape
         self.shape = [ [1,1], 
-                      [1,1] ]
+                    [1,1] ]
+        
+        square = [ [1,1],
+                   [1,1]]
+        
+        h_line = [[1,1,1,1]]
+
+        v_line = [[1],
+                  [1],
+                  [1],
+                  [1]]
+        
+        shapes = [square, h_line, v_line]
+
+        self.shape = random.choice(shapes)
+
+        self.height = len(self.shape)
+        self.width = len(self.shape[0])
 
     # move shape left
     def move_left(self, grid):
@@ -29,21 +46,28 @@ class Shape():
             #check cell to the left is empty
             if grid[self.y][self.x-1] == 0:
                 #clear shape's current cell
-                grid[self.y][self.x] = 0
+                self.erase_shape(grid)
                 #clear shape's current cell
                 #move left by 1
                 self.x -= 1
 
     # move shape right
     def move_right(self, grid):
-        #check shape isnt' already on right edge
-        if self.x < (len_x - 1):
-            # check cell to the right is empty
-            if grid[self.y][self.x+1] == 0:
-                #clear shape's current cell
-                grid[self.y][self.x] = 0
-                #move right by 1
+        if self.x < 12 - self.width:
+            if grid[self.y][self.x + self.width] == 0:
+                self.erase_shape(grid)
                 self.x += 1
+
+    def draw_shape(self, grid):
+        for y in range(self.height):
+            for x in range(self.width):
+                grid[self.y + y][self.x + x] = self.colour
+
+    def erase_shape(self, grid):
+        for y in range(self.height):
+            for x in range(self.width):
+                grid[self.y + y][self.x + x] = 0
+ 
 
 
 # Define grid to display shapes on
@@ -70,7 +94,7 @@ grid = [
     [0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0],
-    [1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0],
     [3,0,2,6,0,1,0,1,4,5,6,4]
 ]
 
@@ -135,23 +159,25 @@ wn.listen()
 wn.onkeypress(lambda: shape.move_left(grid), "a")
 wn.onkeypress(lambda: shape.move_right(grid), "d")
 
-#draw shape; keep shape falling until is stopped; create new shape
+#draw shape; keep shape falling until it's stopped by bottom of screen or another shape; create new shape
 while True:
     wn.update()
 
     #basic falling action of shape
     #if shape has reached the bottom row it stays there, create new shape
-    if shape.y == 23:
+    if shape.y + shape.height - 1 == 23:
         shape = Shape()
-        check_grid(grid)
+        check_grid(grid) 
     #check if cell below shape is empty
-    elif grid[shape.y + 1][shape.x] == 0:
+    elif grid[shape.y + shape.height][shape.x] == 0 and grid[shape.y + shape.height][shape.x + shape.width - 1] == 0:
         #if so, clear existing shape position
-        grid[shape.y][shape.x] = 0
+        shape.erase_shape(grid)
         #update shape's coords (y+1) 
         shape.y += 1
+
         #fill it in
-        grid[shape.y][shape.x] = shape.colour
+        shape.draw_shape(grid)
+
     else:
         shape = Shape()
         check_grid(grid)
