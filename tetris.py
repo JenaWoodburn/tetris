@@ -19,11 +19,11 @@ class Shape():
         self.colour = random.randint(1,7)
 
         #large square shape
-        self.shape = [ [1,1], 
-                    [1,1] ]
+        self.shape = [[1,1], 
+                      [1,1]]
         
-        square = [ [1,1],
-                   [1,1]]
+        square = [[1,1],
+                  [1,1]]
         
         h_line = [[1,1,1,1]]
 
@@ -32,7 +32,22 @@ class Shape():
                   [1],
                   [1]]
         
-        shapes = [square, h_line, v_line]
+        left_l = [[1,0,0,0],
+                  [1,1,1,1]]
+
+        right_l = [[0,0,0,1],
+                   [1,1,1,1]]
+
+        left_s = [[1,1,0],
+                  [0,1,1]]
+
+        right_s = [[0,1,1],
+                   [1,1,0]]
+
+        t = [[0,1,0],
+             [1,1,1]]
+        
+        shapes = [square, h_line, v_line, left_l, right_l, left_s, right_s, t]
 
         self.shape = random.choice(shapes)
 
@@ -61,12 +76,26 @@ class Shape():
     def draw_shape(self, grid):
         for y in range(self.height):
             for x in range(self.width):
-                grid[self.y + y][self.x + x] = self.colour
+                if(self.shape[y][x]) == 1:
+                    grid[self.y + y][self.x + x] = self.colour
 
     def erase_shape(self, grid):
         for y in range(self.height):
             for x in range(self.width):
-                grid[self.y + y][self.x + x] = 0
+                if(self.shape[y][x]) == 1:
+                    grid[self.y + y][self.x + x] = 0
+
+    def can_move(self, grid):
+        result = True
+        for x in range(self.width):
+            #check bottom row
+            if (self.shape[self.height-1][x] == 1):
+                #if cell below a filled-in cell is not empty
+                if (grid[self.y + self.height][self.x + x] != 0):
+                    #can't move
+                    result = False
+        return result
+
  
 
 
@@ -106,6 +135,7 @@ pen = turtle.Turtle()
 pen.penup()
 pen.speed()
 pen.shape("square")
+pen.setundobuffer(None)
 pen.shapesize(stretch_wid=1.5, stretch_len=1.5) # Default pen size is 20x20, set to 30x30
 
 #how to draw the grid
@@ -115,7 +145,7 @@ def draw_grid(pen: turtle.Turtle, grid: list[list[int]]):
     top = 350
     left = -165
     # Shapes will be one of these colours
-    colours = ["black", "light blue", "dark blue", "orange", "green", "purple", "red"]
+    colours = ["black", "lightblue", "darkblue", "orange", "yellow", "green", "purple", "red"]
 
     # Loop through the grid and draw each cell
     for y in range(len(grid)):
@@ -168,8 +198,8 @@ while True:
     if shape.y + shape.height - 1 == 23:
         shape = Shape()
         check_grid(grid) 
-    #check if cell below shape is empty
-    elif grid[shape.y + shape.height][shape.x] == 0 and grid[shape.y + shape.height][shape.x + shape.width - 1] == 0:
+    #check if cells below shape are empty
+    elif shape.can_move(grid): 
         #if so, clear existing shape position
         shape.erase_shape(grid)
         #update shape's coords (y+1) 
@@ -185,5 +215,3 @@ while True:
     draw_grid(pen, grid)
 
     time.sleep(delay)
-
-    
